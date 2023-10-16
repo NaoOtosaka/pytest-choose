@@ -46,5 +46,10 @@ setuptools.setup(
     project_urls={
         'Source Code': 'https://github.com/NaoOtosaka/pytest-choose',
         'Bug Tracker': 'https://github.com/NaoOtosaka/pytest-choose/issues',
+    },
+    entry_points={
+        'pytest11': [
+            'pytest-choose = pytest_choose.plugin',
+        ]
     }
 )
