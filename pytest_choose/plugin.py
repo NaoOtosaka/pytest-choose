@@ -45,7 +45,7 @@ def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config
         terminal_write(session, f'Cases list: {path}', bold=True)
         parse = ChooseFileAnalysis(path, session, encoding=config.getoption('--fc-coding')).parse()
         if parse:
-            for item in items:
+            for item in items[:]:
                 cls = item.parent.name if isinstance(item.parent, pytest.Class) else ''
                 if cls and cls in parse['class']:
                     continue
