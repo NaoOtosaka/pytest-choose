@@ -26,13 +26,13 @@ def pytest_addoption(parser: pytest.Parser):
         "--fc-coding",
         action="store",
         default="utf-8",
-        help="'File encoding, default 'utf-8'"
+        help="File encoding, default 'utf-8'"
     )
     group.addoption(
         "--fc-path",
         action="store",
         default="./choose.json",
-        help="'File Path, default './choose.json'"
+        help="File Path, default './choose.json'"
     )
 
 
