@@ -69,7 +69,7 @@ rootdir: pytest-choose
 plugins: choose-0.0.1
 collecting ... 
 [pytest-choose] Cases list: ./choose.json
-[pytest-choose] Filter 1 cases and collect 5 cases
+[pytest-choose] Filter 2 cases and collect 5 cases
 collected 7 items
 
 cases\test_choose.py .....                         [100%] 
