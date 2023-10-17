@@ -9,7 +9,7 @@ import setuptools
 PACKAGE = "pytest-choose"
 
 install_requires = [
-    'pytest>=4.6'
+    'pytest>=7.0.0'
 ]
 
 with open('README.md', encoding='utf-8') as f:
