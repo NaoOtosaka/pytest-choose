@@ -17,7 +17,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setuptools.setup(
     name=PACKAGE,
-    version="0.0.1",
+    version="0.0.2",
     keywords="pytest",
     author="Azusa",
     author_email="naotosaka@126.com",
@@ -28,7 +28,7 @@ setuptools.setup(
     url="https://github.com/NaoOtosaka/pytest-choose",
     packages=setuptools.find_packages(),
     install_requires=[
-        'pytest>=4.6',
+        'pytest>=7.0.0',
     ],
     classifiers=[
         'Framework :: Pytest',
