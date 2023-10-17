@@ -4,10 +4,11 @@
 @Description:
 
 """
-from .analysis import ChooseFileAnalysis
+import pytest
 from typing import List
 
-import pytest
+from .analysis import ChooseFileAnalysis
+from .terminal_io import terminal_write
 
 
 def pytest_addoption(parser: pytest.Parser):
@@ -35,20 +36,24 @@ def pytest_addoption(parser: pytest.Parser):
     )
 
 
-def pytest_collection_modifyitems(config: pytest.Config, items: List["pytest.Item"]):
+def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config, items: List["pytest.Item"]):
     if config.getoption('--fc') == 'on':
         origin_count = len(items)
         count = 0
         path = config.getoption('--fc-path')
-        print(f'Cases list: {path}')
-        parse = ChooseFileAnalysis(path, encoding=config.getoption('--fc-coding')).parse()
-        print(items)
-        for item in items:
-            cls = item.parent.name if isinstance(item.parent, pytest.Class) else ''
-            if cls and cls in parse['class']:
-                continue
-            if item.name in parse['function']:
-                continue
-            del items[items.index(item)]
-            count += 1
-        print(f'Filter {count} cases and collect {origin_count - count} cases')
+        terminal_write(session, '\n', prefix=False)
+        terminal_write(session, f'Cases list: {path}', bold=True)
+        parse = ChooseFileAnalysis(path, session, encoding=config.getoption('--fc-coding')).parse()
+        if parse:
+            for item in items:
+                cls = item.parent.name if isinstance(item.parent, pytest.Class) else ''
+                if cls and cls in parse['class']:
+                    continue
+                if item.name in parse['function']:
+                    continue
+                del items[items.index(item)]
+                count += 1
+            terminal_write(session, f'Filter {count} cases and collect {origin_count - count} cases', bold=True)
+        else:
+            terminal_write(session, 'Unsupported file format, please use JSON format file', red=True, bold=True)
+            terminal_write(session, 'Not filtered')
