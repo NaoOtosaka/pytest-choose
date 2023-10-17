@@ -1,5 +1,5 @@
 # pytest-choose
-English | <a href="docs/README_ZH.md">简体中文</a>
+English | <a href="https://github.com/NaoOtosaka/pytest-choose/blob/master/docs/README_ZH.md">简体中文</a>
 
 Provide the pytest with the ability to collect use cases based on rules in text files
 

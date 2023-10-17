@@ -1,5 +1,5 @@
 # pytest-choose
-<a href="../README.md">English</a> | 简体中文
+<a href="https://github.com/NaoOtosaka/pytest-choose/blob/master/README.md">English</a> | 简体中文
 
 为pytest提供基于文本文件收集用例的能力
 
