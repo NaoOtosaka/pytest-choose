@@ -1,16 +1,16 @@
 # pytest-choose
-English | <a href="docs/README_ZH.md">简体中文</a>
+<a href="../README.md">English</a> | 简体中文
 
-Provide the pytest with the ability to collect use cases based on rules in text files
+为pytest提供基于文本文件收集用例的能力
 
-## Install
+## 安装
 
 ```shell
 pip install pytest-choose
 ```
 
-## Example
-Create Test Files:
+## 示例
+创建测试文件：
 
 ```python
 # test_demo.py
@@ -38,7 +38,7 @@ def test_demo_7():
 
 ```
 
-Create the choose.json file:
+创建文件`choose.json`，用于选择用例:
 
 ```json
 // choose.json
@@ -55,13 +55,13 @@ Create the choose.json file:
 }
 ```
 
-Run tests:
+执行测试:
 
 ```shell
 pytest --fc="on" --fc-path="./choose.json" -fc-coding="utf-8"
 ```
 
-Running results:
+测试结果如下:
 ```shell              
 ======================= test session starts =======================
 platform win32 -- Python 3.9.6, pytest-7.4.2, pluggy-1.3.0
@@ -77,16 +77,16 @@ cases\test_choose.py ......                        [100%]
 
 ```
 
-## Parameter Description
+## 参数说明
 
-| Parameter | Description |
-| --- | --- |
-| --fc | Default 'off' for file choose, option: 'on' or 'off' |
-| --fc-path | File Path, default './choose.json' |
-| --fc-coding | File encoding, default 'utf-8' |
+| Parameter | Description                   |
+| --- |-------------------------------|
+| --fc | 默认'off'，关闭文件选择。可选项'off', 'on' |
+| --fc-path | 文件路径, 默认 './choose.json'      |
+| --fc-coding | 文件编码, 默认 'utf-8'              |
 
-## License
+## 许可证
 
-pytest-choose is licensed under [GPLv3](/C:/Users/c25555/AppData/Local/Programs/Joplin/resources/app.asar/LICENSE "./LICENSE").
+pytest-choose使用 [GPLv3](/C:/Users/c25555/AppData/Local/Programs/Joplin/resources/app.asar/LICENSE "./LICENSE")许可证
 
 Copyright © 2023 by Azusa.
