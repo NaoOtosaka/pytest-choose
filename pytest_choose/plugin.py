@@ -7,6 +7,7 @@
 import pytest
 from typing import List
 
+from .filter import ItemFilter
 from .analysis import ChooseFileAnalysis
 from .terminal_io import terminal_write
 
@@ -46,10 +47,7 @@ def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config
         parse = ChooseFileAnalysis(path, session, encoding=config.getoption('--fc-coding')).parse()
         if parse:
             for item in items[:]:
-                cls = item.parent.name if isinstance(item.parent, pytest.Class) else ''
-                if cls and cls in parse['class']:
-                    continue
-                if item.name in parse['function']:
+                if ItemFilter(parse, item).filter():
                     continue
                 del items[items.index(item)]
                 count += 1
