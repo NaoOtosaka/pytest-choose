@@ -58,7 +58,7 @@ Create the choose.json file:
 Run tests:
 
 ```shell
-pytest --fc="on" --fc-path="./choose.json" -fc-coding="utf-8"
+pytest --fc="on" --fc-path="./choose.json" --fc-coding="utf-8"
 ```
 
 Running results:

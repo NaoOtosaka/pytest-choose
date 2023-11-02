@@ -58,7 +58,7 @@ def test_demo_7():
 执行测试:
 
 ```shell
-pytest --fc="on" --fc-path="./choose.json" -fc-coding="utf-8"
+pytest --fc="on" --fc-path="./choose.json" --fc-coding="utf-8"
 ```
 
 测试结果如下:
