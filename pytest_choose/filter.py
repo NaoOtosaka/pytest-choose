@@ -21,7 +21,8 @@ class ItemFilter:
         return False
 
     def _function_filter(self) -> bool:
-        if self.item.name in self.parse['function']:
+        item_name = self.item.originalname if hasattr(self.item, 'originalname') else self.item.name
+        if item_name in self.parse['function']:
             return True
         return False
 
