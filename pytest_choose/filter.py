@@ -30,5 +30,5 @@ class ItemFilter:
         if 'class' in self.parse.keys():
             result = self._class_filter()
         if 'function' in self.parse.keys():
-            result = self._function_filter()
+            result = True if result else self._function_filter()
         return result
