@@ -28,7 +28,15 @@ class ChooseFileAnalysis:
         try:
             self.f_obj = open(self.file_path.as_posix(), encoding=encoding)
         except FileNotFoundError as e:
-            terminal_write(session, e.strerror, red=True)
+            terminal_write(session, self.__msg(e.strerror), red=True)
+        else:
+            terminal_write(session, self.__msg(self.file_path.as_posix()), bold=True)
+
+    def __msg(self, msg: str) -> str:
+        if self.is_filter_file:
+            return f'<Filter list>: {msg}'
+        else:
+            return f'<Cases list>: {msg}'
 
     def __json_parse(self) -> dict:
         return json.loads(self.f_obj.read())
