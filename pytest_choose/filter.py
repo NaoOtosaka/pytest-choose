@@ -23,7 +23,7 @@ class ItemFilter:
             return False
         if 'class' in self.filter_parse.keys() and cls in self.filter_parse['class']:
             return False
-        if 'class' in self.parse.keys() and cls not in self.filter_parse['class']:
+        if 'class' in self.parse.keys() and cls not in self.parse['class']:
             return False
         return True
 
@@ -31,7 +31,7 @@ class ItemFilter:
         item_name = self.item.originalname if hasattr(self.item, 'originalname') else self.item.name
         if 'function' in self.filter_parse.keys() and item_name in self.filter_parse['function']:
             return False
-        if 'function' in self.parse.keys() and item_name not in self.filter_parse['function']:
+        if 'function' in self.parse.keys() and item_name not in self.parse['function']:
             return False
         return True
 
