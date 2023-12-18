@@ -18,9 +18,10 @@ class ChooseFileAnalysis:
         '.json'
     ]
 
-    def __init__(self, file_path: str, session: pytest.Session, encoding: str = 'utf-8'):
+    def __init__(self, file_path: str, session: pytest.Session, encoding: str = 'utf-8', is_filter_file: bool = False):
         self.file_path = pathlib.PurePath(file_path)
         self.session = session
+        self.is_filter_file = is_filter_file
 
         self.f_type = self.file_path.suffix
         self.f_obj = ""
