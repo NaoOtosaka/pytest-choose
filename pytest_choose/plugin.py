@@ -51,9 +51,11 @@ def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config
         filter_path = config.getoption('--fc-filter-path')
         coding = config.getoption('--fc-coding')
         terminal_write(session, '\n', prefix=False)
+        # terminal_write(session, f'Cases list: {path}', bold=True)
+        # terminal_write(session, f'Filter list: {filter_path}', bold=True)
         parse = ChooseFileAnalysis(path, session, encoding=coding).parse()
         filter_parse = ChooseFileAnalysis(filter_path, session, encoding=coding, is_filter_file=True).parse()
-        if parse:
+        if parse or filter_parse:
             for item in items[:]:
                 if ItemFilter(parse, item, filter_parse).filter():
                     continue

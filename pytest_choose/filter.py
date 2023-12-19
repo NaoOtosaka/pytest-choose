@@ -21,24 +21,40 @@ class ItemFilter:
         cls = self.item.parent.name if isinstance(self.item.parent, pytest.Class) else ''
         if not cls:
             return False
-        if 'class' in self.filter_parse.keys() and cls in self.filter_parse['class']:
-            return False
-        if 'class' in self.parse.keys() and cls not in self.parse['class']:
+        if cls in self.filter_parse['class']:
             return False
         return True
 
     def _function_filter(self) -> bool:
         item_name = self.item.originalname if hasattr(self.item, 'originalname') else self.item.name
-        if 'function' in self.filter_parse.keys() and item_name in self.filter_parse['function']:
+        if item_name in self.filter_parse['function']:
             return False
-        if 'function' in self.parse.keys() and item_name not in self.parse['function']:
+        return True
+
+    def _class_choose(self) -> bool:
+        cls = self.item.parent.name if isinstance(self.item.parent, pytest.Class) else ''
+        if not cls:
+            return False
+        if cls not in self.parse['class']:
+            return False
+        return True
+
+    def _function_choose(self) -> bool:
+        item_name = self.item.originalname if hasattr(self.item, 'originalname') else self.item.name
+        if item_name not in self.parse['function']:
             return False
         return True
 
     def filter(self) -> bool:
         result = False
-        if 'class' in self.parse.keys() or 'class' in self.filter_parse.keys():
-            result = self._class_filter()
-        if 'function' in self.parse.keys() or 'function' in self.filter_parse.keys():
-            result = True if result else self._function_filter()
+        if self.parse:
+            if 'class' in self.parse.keys():
+                result = self._class_choose()
+            if 'function' in self.parse.keys():
+                result = True if result else self._function_choose()
+        if self.filter_parse:
+            if 'class' in self.filter_parse.keys():
+                result = self._class_filter()
+            if 'function' in self.filter_parse.keys():
+                result = False if not result else self._function_filter()
         return result
