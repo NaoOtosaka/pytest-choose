@@ -30,16 +30,16 @@ def pytest_addoption(parser: pytest.Parser):
         help="File encoding, default 'utf-8'"
     )
     group.addoption(
-        "--fc-path",
-        action="store",
-        default="./choose.json",
-        help="File Path, default './choose.json'"
+        "--fc-allow-path",
+        action="append",
+        default=[],
+        help="Whitelist rule file path, supports duplicate input"
     )
     group.addoption(
-        "--fc-filter-path",
-        action="store",
-        default="./filter.json",
-        help="Filter file Path, default './filter.json'"
+        "--fc-block-path",
+        action="append",
+        default=[],
+        help="Blacklist rule file path, supports duplicate input"
     )
 
 
@@ -47,17 +47,15 @@ def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config
     if config.getoption('--fc') == 'on':
         origin_count = len(items)
         count = 0
-        path = config.getoption('--fc-path')
-        filter_path = config.getoption('--fc-filter-path')
+        allow_list_path = config.getoption('--fc-allow-path')
+        block_list_path = config.getoption('--fc-block-path')
         coding = config.getoption('--fc-coding')
         terminal_write(session, '\n', prefix=False)
-        # terminal_write(session, f'Cases list: {path}', bold=True)
-        # terminal_write(session, f'Filter list: {filter_path}', bold=True)
-        parse = ChooseFileAnalysis(path, session, encoding=coding).parse()
-        filter_parse = ChooseFileAnalysis(filter_path, session, encoding=coding, is_filter_file=True).parse()
-        if parse or filter_parse:
+        allow_list_parse = ChooseFileAnalysis(allow_list_path, session, encoding=coding).parse()
+        block_list_parse = ChooseFileAnalysis(block_list_path, session, encoding=coding, is_filter_file=True).parse()
+        if allow_list_parse or block_list_parse:
             for item in items[:]:
-                if ItemFilter(parse, item, filter_parse).filter():
+                if ItemFilter(allow_list_parse, item, block_list_parse).filter():
                     continue
                 del items[items.index(item)]
                 count += 1
