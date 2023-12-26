@@ -10,8 +10,6 @@ import pytest
 
 
 class ItemFilter:
-    support_key = ['class', 'function']
-
     def __init__(self, parse: dict, item: pytest.Item, filter_parse: Union[dict, bool] = None):
         self.parse = parse
         self.filter_parse = {} if not filter_parse else filter_parse
@@ -48,13 +46,9 @@ class ItemFilter:
     def filter(self) -> bool:
         result = False
         if self.parse:
-            if 'class' in self.parse.keys():
-                result = self._class_choose()
-            if 'function' in self.parse.keys():
-                result = True if result else self._function_choose()
+            result = self._class_choose()
+            result = True if result else self._function_choose()
         if self.filter_parse:
-            if 'class' in self.filter_parse.keys():
-                result = self._class_filter()
-            if 'function' in self.filter_parse.keys():
-                result = False if not result else self._function_filter()
+            result = self._class_filter()
+            result = False if not result else self._function_filter()
         return result
