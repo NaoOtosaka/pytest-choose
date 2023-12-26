@@ -18,7 +18,7 @@ class ItemFilter:
     def _class_filter(self) -> bool:
         cls = self.item.parent.name if isinstance(self.item.parent, pytest.Class) else ''
         if not cls:
-            return False
+            return True
         if cls in self.filter_parse['class']:
             return False
         return True
@@ -44,11 +44,11 @@ class ItemFilter:
         return True
 
     def filter(self) -> bool:
-        result = False
+        result = None
         if self.parse:
             result = self._class_choose()
-            result = True if result else self._function_choose()
-        if self.filter_parse:
-            result = self._class_filter()
-            result = False if not result else self._function_filter()
+            result = self._function_choose() if not result else result
+        if (result is not False) and self.filter_parse:
+            result = self._class_filter() if (result is None) or result else result
+            result = self._function_filter() if result else result
         return result
