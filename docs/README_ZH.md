@@ -1,17 +1,47 @@
 # pytest-choose
-<a href="https://github.com/NaoOtosaka/pytest-choose/blob/master/README.md">English</a> | 简体中文
+<a href="https://github.com/NaoOtosaka/pytest-choose/blob/master/docs/README_EN.md">English</a> | 简体中文
 
 为pytest提供基于文本文件收集用例的能力
 
-## 安装
+> v0.1.0升级说明：
+> - v0.0.x版本升级至v0.1.0版本时，请将原`--fc-path`参数更改为`--fc-allow-path`
+> - 升级后规则文件不强制要求完全包含`class` `function`块，按需编写即可
+
+## 1.安装
 
 ```shell
 pip install pytest-choose
 ```
 
-## 示例
-创建测试文件：
+## 2.参数说明
 
+| Parameter       | Description                   |
+|-----------------|-------------------------------|
+| --fc            | 默认'off'，关闭文件选择。可选项'off', 'on' |
+| --fc-coding     | 文件编码, 默认 'utf-8'              |
+| --fc-allow-path | 白名单文件路径, 支持多次传入以应用多个规则文件      |
+| --fc-block-path | 黑名单文件路径, 支持多次传入以应用多个规则文件      |
+
+## 3.过滤文件模板
+### 3.1.JSON
+```json
+{
+  "@说明": [
+    "@注释以‘@’符开头声明"
+  ],
+  "class": [
+    "@下方填写需要执行的测试类",
+    "TestClassName"
+  ],
+  "function": [
+    "@下方填写需要执行的测试方法",
+    "test_function_name"
+  ]
+}
+```
+
+## 4.示例
+创建测试文件：
 ```python
 # test_demo.py
 class TestDemo:
@@ -38,10 +68,11 @@ def test_demo_7():
 
 ```
 
+### 4.1.基本使用
+
 创建文件`choose.json`，用于选择用例:
 
 ```json
-// choose.json
 {
   "class": [
     "TestDemo"
@@ -58,35 +89,169 @@ def test_demo_7():
 执行测试:
 
 ```shell
-pytest --fc="on" --fc-path="./choose.json" --fc-coding="utf-8"
+pytest --fc="on" --fc-allow-path="./choose.json" --fc-coding="utf-8"
 ```
 
 测试结果如下:
 ```shell              
 ======================= test session starts =======================
-platform win32 -- Python 3.9.6, pytest-7.4.2, pluggy-1.3.0
-rootdir: pytest-choose
-plugins: choose-0.0.1
+platform win32 -- Python 3.9.6, pytest-7.4.3, pluggy-1.3.0
+rootdir: D:\Project\PytestDev\pytest-choose
+plugins: choose-0.1.0
 collecting ... 
-[pytest-choose] Cases list: ./choose.json
-[pytest-choose] Filter 2 cases and collect 5 cases
+
+[pytest-choose] <Allow list>: choose.json -> Successful use of rules
+[pytest-choose] Filter 5 cases and collect 2 cases
 collected 7 items
 
-cases\test_choose.py .....                         [100%] 
-======================== 5 passed in 0.04s ======================== 
+cases\test_choose.py ..                            [100%] 
+======================== 2 passed in 0.03s ======================== 
+```
+### 4.2.黑名单过滤
 
+创建文件`filter.json`，用于过滤用例:
+
+```json
+{
+  "function": [
+    "test_demo_3",
+    "test_demo_4",
+    "test_demo_5"
+  ]
+}
 ```
 
-## 参数说明
+执行测试:
 
-| Parameter | Description                   |
-| --- |-------------------------------|
-| --fc | 默认'off'，关闭文件选择。可选项'off', 'on' |
-| --fc-path | 文件路径, 默认 './choose.json'      |
-| --fc-coding | 文件编码, 默认 'utf-8'              |
+```shell
+pytest --fc="on" --fc-block-path="./filter.json" --fc-coding="utf-8"
+```
+
+测试结果如下:
+```shell              
+======================= test session starts =======================
+platform win32 -- Python 3.9.6, pytest-7.4.3, pluggy-1.3.0
+rootdir: D:\Project\PytestDev\pytest-choose
+plugins: choose-0.1.0
+collecting ... 
+
+[pytest-choose] <Block list>: filter.json -> Successful use of rules
+[pytest-choose] Filter 3 cases and collect 4 cases
+collected 7 items
+
+cases\test_choose.py ....                          [100%] 
+======================== 4 passed in 0.05s ======================== 
+```
+
+
+### 4.3.黑白名单过滤
+- 当同时使用黑白名单时，过滤结果为两个规则的差集（{x∣x∈白名单,且x∉黑名单}）
+- 当黑白名单无重合项时，默认黑名单失效。
+
+创建文件`choose.json`，用于选择用例:
+
+```json
+{
+  "function": [
+    "test_demo_2",
+    "test_demo_3"
+  ]
+}
+```
+创建文件`filter.json`，用于过滤用例:
+
+```json
+{
+  "function": [
+    "test_demo_3",
+    "test_demo_4",
+    "test_demo_5"
+  ]
+}
+```
+
+执行测试:
+
+```shell
+pytest --fc="on" --fc-allow-path="./choose.json" --fc-block-path="./filter.json" --fc-coding="utf-8"
+```
+
+测试结果如下:
+```shell              
+======================= test session starts =======================
+platform win32 -- Python 3.9.6, pytest-7.4.3, pluggy-1.3.0
+rootdir: D:\Project\PytestDev\pytest-choose
+plugins: choose-0.1.0
+
+
+[pytest-choose] <Allow list>: choose.json -> Successful use of rules
+[pytest-choose] <Block list>: filter.json -> Successful use of rules
+[pytest-choose] Filter 6 cases and collect 1 cases
+collected 7 items
+
+cases\test_choose.py .                             [100%] 
+======================== 1 passed in 0.04s ======================== 
+```
+
+### 4.4.多规则文件过滤
+- 当传入规则文件不存在时，仅会抛出响应日志，不会中止测试
+- 当传入同类型的多个规则文件时，生效规则为该类型所有规则文件的并集
+
+创建文件`choose.json`，`choose_1.json`，用于选择用例:
+
+```json
+{
+  "function": [
+    "test_demo_2",
+    "test_demo_3"
+  ]
+}
+```
+```json
+{
+  "function": [
+    "test_demo_4"
+  ]
+}
+```
+创建文件`filter.json`，用于过滤用例:
+
+```json
+{
+  "function": [
+    "test_demo_3",
+    "test_demo_4",
+    "test_demo_5"
+  ]
+}
+```
+同时传入不存在的文件`filter_1.json`，执行测试:
+
+```shell
+pytest --fc="on" --fc-allow-path="./choose.json" --fc-allow-path="./choose_1.json" --fc-block-path="./filter.json" --fc-block-path="./filter_1.json" --fc-coding="utf-8"
+```
+
+测试结果如下:
+```shell              
+======================= test session starts =======================
+platform win32 -- Python 3.9.6, pytest-7.4.3, pluggy-1.3.0
+rootdir: D:\Project\PytestDev\pytest-choose
+plugins: choose-0.1.0
+
+
+[pytest-choose] <Allow list>: choose.json -> Successful use of rules
+[pytest-choose] <Allow list>: choose_1.json -> Successful use of rules
+[pytest-choose] <Block list>: filter.json -> Successful use of rules
+[pytest-choose] <Block list>: filter_1.json -> No such file or directory
+[pytest-choose] Filter 6 cases and collect 1 cases
+collected 7 items
+
+cases\test_choose.py .                              [100%] 
+======================== 1 passed in 0.04s ======================== 
+```
 
 ## 许可证
 
-pytest-choose使用 [GPLv3](/C:/Users/c25555/AppData/Local/Programs/Joplin/resources/app.asar/LICENSE "./LICENSE")许可证
+pytest-choose使用 GPLv3 许可证
 
 Copyright © 2023 by Azusa.
