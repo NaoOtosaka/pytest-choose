@@ -5,47 +5,91 @@
 
 """
 import json
-import pathlib
-from typing import Union
-
 import pytest
+import pathlib
+from typing import Union, TextIO
 
+from . import RULE_TYPE
 from .terminal_io import terminal_write
 
 
 class ChooseFileAnalysis:
     _support_type = [
-        '.json'
+        '.json',
     ]
 
-    def __init__(self, file_path: str, session: pytest.Session, encoding: str = 'utf-8', is_filter_file: bool = False):
-        self.file_path = pathlib.PurePath(file_path)
+    def __init__(
+            self,
+            file_path: list,
+            session: pytest.Session,
+            encoding: str = 'utf-8',
+            is_filter_file: bool = False
+    ):
+        self.file_path = [pathlib.PurePath(path) for path in file_path]
         self.session = session
         self.is_filter_file = is_filter_file
+        self.encoding = encoding
 
-        self.f_type = self.file_path.suffix
-        self.f_obj = ""
-        try:
-            self.f_obj = open(self.file_path.as_posix(), encoding=encoding)
-        except FileNotFoundError as e:
-            terminal_write(session, self.__msg(e.strerror), red=True)
-        else:
-            terminal_write(session, self.__msg(self.file_path.as_posix()), bold=True)
+        self.analysis_result: dict = {t: [] for t in RULE_TYPE}
 
     def __msg(self, msg: str) -> str:
         if self.is_filter_file:
-            return f'<Filter list>: {msg}'
+            return f'<Block list>: {msg}'
         else:
-            return f'<Cases list>: {msg}'
+            return f'<Allow list>: {msg}'
 
-    def __json_parse(self) -> dict:
-        return json.loads(self.f_obj.read())
+    def __get_file_type(self, path: pathlib.PurePath) -> Union[str, bool]:
+        if (t := path.suffix) in self._support_type:
+            return t
+        terminal_write(
+            self.session,
+            self.__msg(f'Unsupported file format, please check the file format -> {path.as_posix()}'),
+            red=True
+        )
+        return False
+
+    def __get_file_object(self, path: pathlib.PurePath) -> Union[TextIO, bool]:
+        _path = path.as_posix()
+        try:
+            f_obj = open(_path, encoding=self.encoding)
+        except FileNotFoundError as e:
+            terminal_write(self.session, self.__msg(f"{_path} -> {e.strerror}"), red=True)
+            return False
+        else:
+            terminal_write(self.session, self.__msg(f"{_path} -> Successful use of rules"), bold=True)
+            return f_obj
+
+    @staticmethod
+    def __json_parse(f_obj: Union[TextIO, bool]) -> dict:
+        if not f_obj:
+            return {}
+        return json.loads(f_obj.read())
+
+    @staticmethod
+    def __ini_parse(f_obj: TextIO) -> dict:
+        pass
+
+    def __parse_interface(self, t: str, path: pathlib.PurePath) -> dict:
+        if t == '.json':
+            return self.__json_parse(self.__get_file_object(path))
+        elif t == '.ini':
+            return self.__ini_parse(self.__get_file_object(path))
+
+    def __update_result(self, rule_dict: dict):
+        for t in RULE_TYPE:
+            if t not in rule_dict.keys():
+                continue
+            self.analysis_result[t] = list(set(rule_dict[t] + self.analysis_result[t]))  # 去重
 
     def parse(self) -> Union[bool, dict]:
-        if isinstance(self.f_obj, str):
-            return False
-        if self.f_type not in self._support_type:
-            print('Unsupported file format, please use JSON format file')
-            return False
-        if self.f_type == '.json':
-            return self.__json_parse()
+        flag = False
+        # 更新规则列表
+        for path in self.file_path:
+            if t := self.__get_file_type(path):
+                rule = self.__parse_interface(t, path)
+                self.__update_result(rule)
+        # 判断更新后规则列表是否非空
+        for t in RULE_TYPE:
+            if self.analysis_result[t]:
+                flag = True
+        return self.analysis_result if flag else False
