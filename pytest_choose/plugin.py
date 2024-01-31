@@ -71,7 +71,8 @@ def pytest_collection_modifyitems(session: pytest.Session, config: pytest.Config
                 del items[items.index(item)]
                 count += 1
             terminal_write(session, f'Filter {count} cases and collect {origin_count - count} cases', bold=True)
-            terminal_write(session, f'Use marker: {allow_list_parse["marker"]}')
+            terminal_write(session, f'Use marker: {config.getoption("markexpr")}')
+            terminal_write(session, f'Use case path: {config.getoption("file_or_dir")}')
         else:
             terminal_write(session, 'Unsupported file format, please use JSON format file', red=True, bold=True)
             terminal_write(session, 'Not filtered')
