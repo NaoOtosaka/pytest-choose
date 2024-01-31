@@ -21,7 +21,7 @@ class ChooseFileAnalysis:
     def __init__(
             self,
             file_path: list,
-            session: pytest.Session,
+            session: pytest.Session = None,
             encoding: str = 'utf-8',
             is_filter_file: bool = False
     ):
@@ -47,11 +47,12 @@ class ChooseFileAnalysis:
         """
         if (t := path.suffix) in self._support_type:
             return t
-        terminal_write(
-            self.session,
-            self.__msg(f'Unsupported file format, please check the file format -> {path.as_posix()}'),
-            red=True
-        )
+        if self.session:
+            terminal_write(
+                self.session,
+                self.__msg(f'Unsupported file format, please check the file format -> {path.as_posix()}'),
+                red=True
+            )
         return False
 
     def __get_file_object(self, path: pathlib.PurePath) -> Union[TextIO, bool]:
@@ -65,10 +66,12 @@ class ChooseFileAnalysis:
         try:
             f_obj = open(_path, encoding=self.encoding)
         except FileNotFoundError as e:
-            terminal_write(self.session, self.__msg(f"{_path} -> {e.strerror}"), red=True)
-            return False
+            if self.session:
+                terminal_write(self.session, self.__msg(f"{_path} -> {e.strerror}"), red=True)
+                return False
         else:
-            terminal_write(self.session, self.__msg(f"{_path} -> Successful use of rules"), bold=True)
+            if self.session:
+                terminal_write(self.session, self.__msg(f"{_path} -> Successful use of rules"), bold=True)
             return f_obj
 
     @staticmethod
