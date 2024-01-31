@@ -7,4 +7,4 @@
 __version__ = '0.1.0'
 __plugin_name__ = 'pytest-choose'
 
-RULE_TYPE = ['class', 'function', ]
+RULE_TYPE = ['class', 'function', 'path', 'marker', ]
