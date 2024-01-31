@@ -4,16 +4,19 @@
 @Description: 
 
 """
+import pytest
 
 
 class TestDemo:
     def test_demo_1(self):
         print(1)
 
+    @pytest.mark.testt
     def test_demo_2(self):
         print(2)
 
 
+@pytest.mark.test
 def test_demo_3():
     print(3)
 

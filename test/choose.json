@@ -1,4 +1,12 @@
 {
+  "path": [
+    "./cases/",
+    "./ca1ses/"
+  ],
+  "marker": [
+    "test",
+    "not testt"
+  ],
   "function": [
     "test_demo_2",
     "test_demo_3"
