@@ -115,6 +115,20 @@ class ChooseFileAnalysis:
                 continue
             self.analysis_result[t] = list(set(rule_dict[t] + self.analysis_result[t]))  # 去重
 
+    def __deal_marker(self):
+        """
+        Marker规则解析，拼接列表信息为pytest可解析的字符串
+
+        :return:
+        """
+        new_marker = ''
+        for i in self.analysis_result['marker']:
+            if not new_marker:
+                new_marker += i
+                continue
+            new_marker += f" and {i}"
+        self.analysis_result['marker'] = new_marker if new_marker else []
+
     def parse(self) -> Union[bool, dict]:
         flag = False
         # 更新规则列表
@@ -126,4 +140,5 @@ class ChooseFileAnalysis:
         for t in RULE_TYPE:
             if self.analysis_result[t]:
                 flag = True
+        self.__deal_marker()
         return self.analysis_result if flag else False
