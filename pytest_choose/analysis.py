@@ -39,6 +39,12 @@ class ChooseFileAnalysis:
             return f'<Allow list>: {msg}'
 
     def __get_file_type(self, path: pathlib.PurePath) -> Union[str, bool]:
+        """
+        获取规则文件格式
+
+        :param path: 规则文件路径
+        :return: 文件后缀
+        """
         if (t := path.suffix) in self._support_type:
             return t
         terminal_write(
@@ -49,6 +55,12 @@ class ChooseFileAnalysis:
         return False
 
     def __get_file_object(self, path: pathlib.PurePath) -> Union[TextIO, bool]:
+        """
+        初始化规则文件对象
+
+        :param path: 规则文件路径
+        :return: 规则文件对象
+        """
         _path = path.as_posix()
         try:
             f_obj = open(_path, encoding=self.encoding)
@@ -61,6 +73,12 @@ class ChooseFileAnalysis:
 
     @staticmethod
     def __json_parse(f_obj: Union[TextIO, bool]) -> dict:
+        """
+        JSON格式规则文件解析，转字典
+
+        :param f_obj: 文件对象
+        :return: 解析后字典
+        """
         if not f_obj:
             return {}
         return json.loads(f_obj.read())
@@ -70,12 +88,25 @@ class ChooseFileAnalysis:
         pass
 
     def __parse_interface(self, t: str, path: pathlib.PurePath) -> dict:
+        """
+        解析接口
+
+        :param t: 文件格式
+        :param path: 文件路径
+        :return: 解析后字典
+        """
         if t == '.json':
             return self.__json_parse(self.__get_file_object(path))
         elif t == '.ini':
             return self.__ini_parse(self.__get_file_object(path))
 
     def __update_result(self, rule_dict: dict):
+        """
+        更新规则集，将新的规则字典更新至规则中并去重
+
+        :param rule_dict: 规则字典
+        :return:
+        """
         for t in RULE_TYPE:
             if t not in rule_dict.keys():
                 continue
