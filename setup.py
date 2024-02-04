@@ -17,7 +17,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setuptools.setup(
     name=PACKAGE,
-    version="0.1.0",
+    version="0.2.0",
     keywords="pytest",
     author="Azusa",
     author_email="naotosaka@126.com",
