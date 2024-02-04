@@ -43,13 +43,13 @@ def pytest_addoption(parser: pytest.Parser):
     )
 
 
-def pytest_load_initial_conftests(early_config: pytest.Config):
+def pytest_load_initial_conftests(early_config: pytest.Config, args):
     if getattr(early_config.known_args_namespace, 'fc') == 'on':
         allow_list_path = getattr(early_config.known_args_namespace, 'fc_allow_path')
         coding = getattr(early_config.known_args_namespace, 'fc_coding')
         allow_list_parse = ChooseFileAnalysis(allow_list_path, None, encoding=coding).parse()
         if new_path := allow_list_parse['path']:
-            setattr(early_config.option, 'file_or_dir', new_path)
+            args[:] = new_path + args
         if new_marker := allow_list_parse['marker']:
             setattr(early_config.option, 'markexpr', new_marker)
 
