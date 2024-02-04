@@ -1,7 +1,6 @@
 {
   "path": [
-    "./cases/",
-    "./ca1ses/"
+    "./cases/"
   ],
   "marker": [
     "test",

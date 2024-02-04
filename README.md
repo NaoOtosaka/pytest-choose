@@ -29,6 +29,14 @@ pip install pytest-choose
   "@说明": [
     "@注释以‘@’符开头声明"
   ],
+  "path": [
+    "@下方填写用例路径",
+    "TestClassName"
+  ],
+  "marker": [
+    "@下方填写需要选中的测试tag",
+    "test_function_name"
+  ],
   "class": [
     "@下方填写需要执行的测试类",
     "TestClassName"
@@ -44,13 +52,18 @@ pip install pytest-choose
 创建测试文件：
 ```python
 # test_demo.py
+import pytest
+
+
 class TestDemo:
     def test_demo_1(self):
         print(1)
 
+    @pytest.mark.testt    
     def test_demo_2(self):
         print(2)
 
+@pytest.mark.test
 def test_demo_3():
     print(3)
 
@@ -245,6 +258,46 @@ plugins: choose-0.1.0
 [pytest-choose] <Block list>: filter_1.json -> No such file or directory
 [pytest-choose] Filter 6 cases and collect 1 cases
 collected 7 items
+
+cases\test_choose.py .                              [100%] 
+======================== 1 passed in 0.04s ======================== 
+```
+
+### 4.5.用例路径及Tag过滤
+- 当传入path参数中路径不存在时会在用例收集阶段触发对应异常
+- Tag参数以and方式拼接
+
+创建文件`choose.json`用于选择用例:
+
+```json
+{
+  "path": [
+    "./cases/"
+  ],
+  "marker": [
+    "test",
+    "not testt"
+  ],
+  "function": [
+    "test_demo_2",
+    "test_demo_3"
+  ]
+}
+```
+
+测试结果如下:
+```shell              
+======================= test session starts =======================
+platform win32 -- Python 3.9.6, pytest-7.4.3, pluggy-1.3.0
+rootdir: D:\Project\PytestDev\pytest-choose
+plugins: choose-0.2.0
+collecting ... 
+
+[pytest-choose] <Allow list>: choose.json -> Successful use of rules
+[pytest-choose] Filter 5 cases and collect 2 cases
+[pytest-choose] Use marker: test and not testt
+[pytest-choose] Use case path: ['./cases/']
+collected 7 items / 1 deselected / 6 selected                                                                                                                                                             
 
 cases\test_choose.py .                              [100%] 
 ======================== 1 passed in 0.04s ======================== 
